@@ -27,8 +27,12 @@ class MainActivity : ComponentActivity() {
         // Build the dependency chain: DB → DAO → Repository → ViewModel
         val database   = AppDatabase.getInstance(applicationContext)
         val repository = UserRepository(database.userDao())
+        val incidentRepository = IncidentRepository(database.incidentDao())
         val viewModel: AuthViewModel by viewModels {
             AuthViewModelFactory(repository)
+        }
+        val safetyViewModel: SafetyViewModel by viewModels {
+            SafetyViewModelFactory(incidentRepository)
         }
 
         setContent {
