@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         val database   = AppDatabase.getInstance(applicationContext)
         val repository = UserRepository(database.userDao())
         val incidentRepository = IncidentRepository(database.incidentDao())
-        val viewModel: AuthViewModel by viewModels {
+        val authViewModel: AuthViewModel by viewModels {
             AuthViewModelFactory(repository)
         }
         val safetyViewModel: SafetyViewModel by viewModels {
@@ -38,7 +38,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             NdejjeSafetyAppTheme() {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation(viewModel = viewModel)
+                    AppNavigation(
+                        authViewModel = authViewModel,
+                        safetyViewModel = safetyViewModel
+                    )
                 }
             }
         }

@@ -20,4 +20,7 @@
     <!-- Home Screen -->
     <string name="label_welcome">Welcome, %s!</string>
     <string name="btn_logout">Logout</string>
+
+    <string name="btn_report_incident">Report an Incident</string>
+    <string name="btn_view_alerts">View Live Alerts</string>
 </resources>
