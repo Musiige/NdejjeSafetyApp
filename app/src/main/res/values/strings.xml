@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MoMo Login</string>
+    <string name="app_name">Ndejje Safety</string>
     <!-- Login Screen -->
     <string name="label_login">Login</string>
     <string name="label_username">Username</string>
