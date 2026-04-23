@@ -87,9 +87,12 @@ fun AppNavigation(
             )
         }
 
-        composable("alerts") {
-            // We will build AlertsDashboard soon
-            Text("Alerts Dashboard Coming Soon")
+        // Inside your NavHost in AppNavigation.kt
+        composable(Routes.ALERTS) {
+            AlertsDashboard(
+                viewModel = safetyViewModel,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }

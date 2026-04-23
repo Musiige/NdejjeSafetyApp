@@ -23,4 +23,6 @@
 
     <string name="btn_report_incident">Report an Incident</string>
     <string name="btn_view_alerts">View Live Alerts</string>
+    <string name="btn_emergency_call">CALL CAMPUS SECURITY</string>
+
 </resources>

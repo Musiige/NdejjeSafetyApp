@@ -11,13 +11,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ndejje.safetyapp.R
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
+
 @Composable
 fun HomeScreen(
     username: String,
     onLogout: () -> Unit,
-    onNavigateToReport: () -> Unit, // Add this
-    onNavigateToAlerts: () -> Unit  // Add this
+    onNavigateToReport: () -> Unit,
+    onNavigateToAlerts: () -> Unit
 ) {
+    val context = LocalContext.current // Used to launch the Dialer
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,33 +39,57 @@ fun HomeScreen(
 
         Spacer(Modifier.height(32.dp))
 
-        // 1. Button to Report Incident
+        // 1. Report Incident
         Button(
             onClick = onNavigateToReport,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dimensionResource(R.dimen.buttonHeight))
         ) {
-            Text("REPORT AN INCIDENT") // We will move this to strings.xml later
+            Text(stringResource(R.string.btn_report_incident))
         }
 
         Spacer(Modifier.height(dimensionResource(R.dimen.spacingMedium)))
 
-        // 2. Button to View Live Alerts
+        // 2. View Alerts
         ElevatedButton(
             onClick = onNavigateToAlerts,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dimensionResource(R.dimen.buttonHeight))
         ) {
-            Text("VIEW LIVE ALERTS")
+            Text(stringResource(R.string.btn_view_alerts))
+        }
+
+        Spacer(Modifier.height(dimensionResource(R.dimen.spacingMedium)))
+
+        // 3. EMERGENCY CALL BUTTON
+        // Using ButtonDefaults.buttonColors to make it Red (Error color)
+        Button(
+            onClick = {
+                val intent = Intent(Intent.ACTION_DIAL).apply {
+                    data = Uri.parse("tel:+256700000000") // Replace with actual Ndejje Security number
+                }
+                context.startActivity(intent)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(dimensionResource(R.dimen.buttonHeight)),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            )
+        ) {
+            Text(stringResource(R.string.btn_emergency_call))
         }
 
         Spacer(Modifier.height(48.dp))
 
-        // 3. Logout Button
+        // 4. Logout
         TextButton(onClick = onLogout) {
-            Text(stringResource(R.string.btn_logout), color = MaterialTheme.colorScheme.error)
+            Text(
+                text = stringResource(R.string.btn_logout),
+                color = MaterialTheme.colorScheme.error
+            )
         }
     }
 }
