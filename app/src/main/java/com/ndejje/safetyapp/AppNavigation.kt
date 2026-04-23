@@ -14,7 +14,7 @@ import com.ndejje.safetyapp.AuthViewModel
 
 object Routes {
     const val LOGIN    = "login"
-    const val REPORT = "report"
+    const val REPORT = "report_incident"
     const val REGISTER = "register"
     // FIX: Change the literal email to a placeholder
     const val HOME     = "home/{username}"

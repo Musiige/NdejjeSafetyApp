@@ -21,7 +21,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "momo_login_db"
-                ).build().also { instance = it }
+                )
+                    .fallbackToDestructiveMigration() // <--- ADD THIS LINE HERE
+                    .build().also { instance = it }
             }
         }
     }
