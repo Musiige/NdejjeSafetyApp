@@ -1,30 +1,27 @@
 package com.ndejje.safetyapp
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.ndejje.safetyapp.HomeScreen
-import com.ndejje.safetyapp.LoginScreen
-import com.ndejje.safetyapp.RegisterScreen
-import com.ndejje.safetyapp.AuthViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 object Routes {
-    const val LOGIN    = "login"
+    const val LOGIN = "login"
     const val REPORT = "report_incident"
     const val REGISTER = "register"
     const val ALERTS = "alerts"
     const val ANALYTICS = "analytics"
-    const val HOME     = "home/{username}"
+    const val HOME = "home" // Simplified for the route key
     const val RESOURCES = "resources"
 }
+
 @Composable
 fun AppNavigation(
-    authViewModel: AuthViewModel,    // Renamed from 'viewModel' to be specific
-    safetyViewModel: SafetyViewModel // Added the new ViewModel
+    authViewModel: AuthViewModel,
+    safetyViewModel: SafetyViewModel
 ) {
     val navController = rememberNavController()
 
@@ -33,9 +30,11 @@ fun AppNavigation(
         // LOGIN SCREEN
         composable(Routes.LOGIN) {
             LoginScreen(
-                viewModel = authViewModel, // Pass authViewModel here
+                viewModel = authViewModel,
                 onLoginSuccess = { username ->
-                    navController.navigate("home/$username") {
+                    // Set the user in safetyViewModel before navigating
+                    safetyViewModel.login(username)
+                    navController.navigate(Routes.HOME) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
                     }
                 },
@@ -49,9 +48,10 @@ fun AppNavigation(
         // REGISTER SCREEN
         composable(Routes.REGISTER) {
             RegisterScreen(
-                viewModel = authViewModel, // Pass authViewModel here
+                viewModel = authViewModel,
                 onRegisterSuccess = { username ->
-                    navController.navigate("home/$username") {
+                    safetyViewModel.login(username)
+                    navController.navigate(Routes.HOME) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
                     }
                 },
@@ -59,34 +59,36 @@ fun AppNavigation(
             )
         }
 
-        composable(
-            route = Routes.HOME,
-            arguments = listOf(navArgument("username") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val username = backStackEntry.arguments?.getString("username") ?: "User"
+        // HOME SCREEN
+        composable(Routes.HOME) {
             HomeScreen(
-                username = username,
-                onLogout = { navController.navigate(Routes.LOGIN) },
+                // FIXED: Changed 'viewModel' to 'safetyViewModel'
+                username = safetyViewModel.loggedInUser ?: "Student",
+                onLogout = {
+                    safetyViewModel.logout()
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.HOME) { inclusive = true }
+                    }
+                },
                 onNavigateToReport = { navController.navigate(Routes.REPORT) },
                 onNavigateToAlerts = { navController.navigate(Routes.ALERTS) },
-                onNavigateToAnalytics = { navController.navigate(Routes.ANALYTICS) }, // Match this!
-                onNavigateToResources = { navController.navigate(Routes.RESOURCES) } // Match this!
+                onNavigateToAnalytics = { navController.navigate(Routes.ANALYTICS) },
+                onNavigateToResources = { navController.navigate(Routes.RESOURCES) }
             )
         }
 
-        // Inside NavHost in AppNavigation.kt
+        // REPORT SCREEN
         composable(Routes.REPORT) {
             ReportIncidentScreen(
                 viewModel = safetyViewModel,
                 onReportSubmitted = {
-                    // After submitting, go back to Home or Alerts
                     navController.popBackStack()
                 },
                 onBack = { navController.popBackStack() }
             )
         }
 
-        // 1. ADD THE ANALYTICS ROUTE
+        // ANALYTICS SCREEN
         composable(Routes.ANALYTICS) {
             AdminAnalyticsScreen(
                 viewModel = safetyViewModel,
@@ -94,14 +96,14 @@ fun AppNavigation(
             )
         }
 
-        // 2. ADD THE RESOURCES ROUTE
+        // RESOURCES SCREEN
         composable(Routes.RESOURCES) {
             SafetyResourcesScreen(
                 onBack = { navController.popBackStack() }
             )
         }
 
-        // 3. ENSURE ALERTS IS CORRECT
+        // ALERTS SCREEN
         composable(Routes.ALERTS) {
             AlertsDashboard(
                 viewModel = safetyViewModel,
@@ -109,4 +111,4 @@ fun AppNavigation(
             )
         }
     }
-    }
+}
