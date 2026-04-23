@@ -20,7 +20,8 @@ fun HomeScreen(
     username: String,
     onLogout: () -> Unit,
     onNavigateToReport: () -> Unit,
-    onNavigateToAlerts: () -> Unit
+    onNavigateToAlerts: () -> Unit,
+    onNavigateToAnalytics: () -> Unit
 ) {
     val context = LocalContext.current // Used to launch the Dialer
 
@@ -62,6 +63,22 @@ fun HomeScreen(
         }
 
         Spacer(Modifier.height(dimensionResource(R.dimen.spacingMedium)))
+
+        if (username.equals("admin", ignoreCase = true)) {
+            Spacer(Modifier.height(dimensionResource(R.dimen.spacingMedium)))
+
+            Button(
+                onClick = onNavigateToAnalytics,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(dimensionResource(R.dimen.buttonHeight)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text("ADMIN: VIEW ANALYTICS")
+            }
+        }
 
         // 3. EMERGENCY CALL BUTTON
         // Using ButtonDefaults.buttonColors to make it Red (Error color)

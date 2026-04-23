@@ -10,5 +10,6 @@ data class UserEntity(
     val fullName: String,
     val username: String,
     val email: String,
-    val passwordHash: String    // store hashed, never plain text
+    val passwordHash: String ,   // store hashed, never plain text
+    val role: String = "student" // New field: default is "student"
 )

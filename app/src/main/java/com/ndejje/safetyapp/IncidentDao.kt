@@ -15,6 +15,9 @@ interface IncidentDao {
     @Query("SELECT * FROM incidents ORDER BY timestamp DESC")
     fun getAllIncidents(): Flow<List<IncidentEntity>>
 
+    @Query("SELECT COUNT(*) FROM incidents WHERE campus = :campusName")
+    fun getCountByCampus(campusName: String): Flow<Int>
+
     @Query("SELECT * FROM incidents WHERE campus = :campusName")
     fun getIncidentsByCampus(campusName: String): Flow<List<IncidentEntity>>
 }

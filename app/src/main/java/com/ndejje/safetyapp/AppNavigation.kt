@@ -16,7 +16,8 @@ object Routes {
     const val LOGIN    = "login"
     const val REPORT = "report_incident"
     const val REGISTER = "register"
-    // FIX: Change the literal email to a placeholder
+    const val ALERTS = "alerts"
+    const val ANALYTICS = "analytics"
     const val HOME     = "home/{username}"
 }
 @Composable
@@ -57,7 +58,6 @@ fun AppNavigation(
             )
         }
 
-        // HOME SCREEN
         composable(
             route = Routes.HOME,
             arguments = listOf(navArgument("username") { type = NavType.StringType })
@@ -65,13 +65,10 @@ fun AppNavigation(
             val username = backStackEntry.arguments?.getString("username") ?: "User"
             HomeScreen(
                 username = username,
-                onLogout = {
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo("home/$username") { inclusive = true }
-                    }
-                },
-                onNavigateToReport = { navController.navigate("report_incident") },
-                onNavigateToAlerts = { navController.navigate("alerts") }
+                onLogout = { /* navigation logic */ },
+                onNavigateToReport = { navController.navigate(Routes.REPORT) },
+                onNavigateToAlerts = { navController.navigate(Routes.ALERTS) },
+                onNavigateToAnalytics = { navController.navigate(Routes.ANALYTICS) } // Connect it here
             )
         }
 
