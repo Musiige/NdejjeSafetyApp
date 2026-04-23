@@ -25,4 +25,16 @@
     <string name="btn_view_alerts">View Live Alerts</string>
     <string name="btn_emergency_call">CALL CAMPUS SECURITY</string>
 
+        <string name="res_night_title">Night Safety</string>
+        <string name="res_night_content">Avoid walking alone in dark areas of the Main Campus. Stick to the paved, lit paths and keep your phone charged.</string>
+        <string name="res_night_contact">Security: 0700123456</string>
+
+        <string name="res_harassment_title">After Harassment</string>
+        <string name="res_harassment_content">Get to a safe place immediately. Document the time, location, and person involved. You can report it via this app or visit the Dean\'s office.</string>
+        <string name="res_harassment_contact">Counseling: 0755987654</string>
+
+        <string name="res_mental_title">Mental Health</string>
+        <string name="res_mental_content">If you feel overwhelmed, anxious, or depressed, Ndejje University offers free, confidential counseling sessions.</string>
+        <string name="res_mental_contact">Counselor: 0788111222</string>
+
 </resources>

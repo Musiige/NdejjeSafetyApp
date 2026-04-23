@@ -12,5 +12,11 @@ data class IncidentEntity(
     val description: String,
     val campus: String, // Main, Bombo, or Kampala
     val timestamp: Long = System.currentTimeMillis(),
-    val status: String = "Pending"
+    val status: String = "Pending",
+
+    val category: String,             // e.g., "Theft", "Emergency"
+    val imagePath: String? = null,    // Stores the URI of the photo
+    val isAnonymous: Boolean = false, // Toggle for hiding name
+
+    val reporterName: String         // Always keep the real name for Admins
 )

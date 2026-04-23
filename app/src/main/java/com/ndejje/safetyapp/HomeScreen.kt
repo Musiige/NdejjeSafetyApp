@@ -21,7 +21,8 @@ fun HomeScreen(
     onLogout: () -> Unit,
     onNavigateToReport: () -> Unit,
     onNavigateToAlerts: () -> Unit,
-    onNavigateToAnalytics: () -> Unit
+    onNavigateToAnalytics: () -> Unit,
+    onNavigateToResources: () -> Unit
 ) {
     val context = LocalContext.current // Used to launch the Dialer
 

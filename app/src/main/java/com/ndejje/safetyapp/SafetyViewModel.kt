@@ -6,11 +6,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
 class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() {
 
-    // Converts the Flow from Room into a StateFlow for Compose
-    // This satisfies the "Robust State Management" requirement
     val incidents: StateFlow<List<IncidentEntity>> = repository.allIncidents
         .stateIn(
             scope = viewModelScope,
@@ -18,13 +15,26 @@ class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() 
             initialValue = emptyList()
         )
 
-    fun submitReport(title: String, description: String, campus: String) {
+    // UPDATED: Now accepts the 6 arguments from your UI
+    fun submitReport(
+        title: String,
+        description: String,
+        campus: String,
+        category: String,      // NEW
+        imageUri: String?,     // NEW
+        isAnonymous: Boolean   // NEW
+    ) {
         viewModelScope.launch {
             val newIncident = IncidentEntity(
                 title = title,
                 description = description,
-                campus = campus
+                campus = campus,
+                category = category,           // Match Entity
+                imagePath = imageUri,          // Match Entity
+                isAnonymous = isAnonymous,     // Match Entity
+                reporterName = "Student User"  // Placeholder - you can link this to your login state later
             )
+            // Ensure this matches your Repository function name (usually 'insertIncident' or 'reportIncident')
             repository.reportIncident(newIncident)
         }
     }

@@ -19,6 +19,7 @@ object Routes {
     const val ALERTS = "alerts"
     const val ANALYTICS = "analytics"
     const val HOME     = "home/{username}"
+    const val RESOURCES = "resources"
 }
 @Composable
 fun AppNavigation(
@@ -65,10 +66,11 @@ fun AppNavigation(
             val username = backStackEntry.arguments?.getString("username") ?: "User"
             HomeScreen(
                 username = username,
-                onLogout = { /* navigation logic */ },
+                onLogout = { navController.navigate(Routes.LOGIN) },
                 onNavigateToReport = { navController.navigate(Routes.REPORT) },
                 onNavigateToAlerts = { navController.navigate(Routes.ALERTS) },
-                onNavigateToAnalytics = { navController.navigate(Routes.ANALYTICS) } // Connect it here
+                onNavigateToAnalytics = { navController.navigate(Routes.ANALYTICS) }, // Match this!
+                onNavigateToResources = { navController.navigate(Routes.RESOURCES) } // Match this!
             )
         }
 
@@ -84,7 +86,22 @@ fun AppNavigation(
             )
         }
 
-        // Inside your NavHost in AppNavigation.kt
+        // 1. ADD THE ANALYTICS ROUTE
+        composable(Routes.ANALYTICS) {
+            AdminAnalyticsScreen(
+                viewModel = safetyViewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // 2. ADD THE RESOURCES ROUTE
+        composable(Routes.RESOURCES) {
+            SafetyResourcesScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // 3. ENSURE ALERTS IS CORRECT
         composable(Routes.ALERTS) {
             AlertsDashboard(
                 viewModel = safetyViewModel,
@@ -92,4 +109,4 @@ fun AppNavigation(
             )
         }
     }
-}
+    }
