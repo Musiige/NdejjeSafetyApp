@@ -22,6 +22,13 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
+    primary = SafetyGreen,
+    secondary = SafetyGreenDark,
+    surface = SafetyWhite,
+    // Add other mappings here
+)
+
+/*private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40
@@ -35,7 +42,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
     */
-)
+)*/
 
 @Composable
 fun NdejjeSafetyAppTheme(
