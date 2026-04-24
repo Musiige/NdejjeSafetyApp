@@ -1,5 +1,9 @@
 package com.ndejje.safetyapp
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,30 +17,40 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import com.ndejje.safetyapp.R
-import com.ndejje.safetyapp.AppDatabase
-import com.ndejje.safetyapp.UserRepository
+import androidx.core.app.ActivityCompat // NEW: For permissions
 import com.ndejje.safetyapp.ui.theme.NdejjeSafetyAppTheme
-import com.ndejje.safetyapp.AuthViewModel
-import com.ndejje.safetyapp.AuthViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Build the dependency chain: DB → DAO → Repository → ViewModel
-        val database   = AppDatabase.getInstance(applicationContext)
-        val repository = UserRepository(database.userDao())
-        val incidentRepository = IncidentRepository(database.incidentDao())
+        // 1. CREATE NOTIFICATION CHANNEL (Required for Android 8.0+)
+        createNotificationChannel()
+
+        // 2. REQUEST PERMISSION (Required for Android 13+)
+        // This won't lag your PC; it's a simple OS check
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                101
+            )
+        }
+
+        // Build the dependency chain
+        val database = AppDatabase.getInstance(applicationContext)
+        val userRepository = UserRepository(database.userDao())
+        val incidentRepo = IncidentRepository(database.incidentDao())
+
         val authViewModel: AuthViewModel by viewModels {
-            AuthViewModelFactory(repository)
+            AuthViewModelFactory(userRepository)
         }
         val safetyViewModel: SafetyViewModel by viewModels {
-            SafetyViewModelFactory(incidentRepository)
+            SafetyViewModelFactory(incidentRepo)
         }
 
         setContent {
-            NdejjeSafetyAppTheme() {
+            NdejjeSafetyAppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     AppNavigation(
                         authViewModel = authViewModel,
@@ -46,7 +60,24 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    // 3. CHANNEL LOGIC (Separated to keep onCreate clean)
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Safety Alerts"
+            val descriptionText = "Notifications for Ndejje Safety Reports"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("SAFETY_CHANNEL", name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
 }
+
+// ... Keep your Preview code exactly as it was below this ...
 
 // ─────────────────────────────────────────────────────────────
 // PREVIEW

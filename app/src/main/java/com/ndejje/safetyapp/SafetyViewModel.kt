@@ -1,8 +1,12 @@
 package com.ndejje.safetyapp
 
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,12 +16,9 @@ import kotlinx.coroutines.launch
 
 class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() {
 
-    // 1. TRACK LOGGED IN USER
-    // We use 'null' to mean no one is logged in.
     var loggedInUser by mutableStateOf<String?>(null)
         private set
 
-    // 2. INCIDENTS LIST
     val incidents: StateFlow<List<IncidentEntity>> = repository.allIncidents
         .stateIn(
             scope = viewModelScope,
@@ -25,18 +26,17 @@ class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() 
             initialValue = emptyList()
         )
 
-    // 3. LOGIN LOGIC
     fun login(username: String) {
         loggedInUser = username
     }
 
-    // 4. LOGOUT LOGIC
     fun logout() {
         loggedInUser = null
     }
 
-    // 5. SUBMIT REPORT
+    // UPDATED: Now takes 'context' to trigger the notification
     fun submitReport(
+        context: Context,
         title: String,
         description: String,
         campus: String,
@@ -52,10 +52,27 @@ class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() 
                 category = category,
                 imagePath = imageUri,
                 isAnonymous = isAnonymous,
-                // Use the real logged-in name, or 'Guest' if null
                 reporterName = loggedInUser ?: "Guest User"
             )
             repository.reportIncident(newIncident)
+
+            // Trigger the notification after saving to DB
+            showLocalNotification(context, title)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun showLocalNotification(context: Context, reportTitle: String) {
+        val builder = NotificationCompat.Builder(context, "SAFETY_CHANNEL")
+            .setSmallIcon(R.drawable.ic_notification) // The white vector icon you created
+            .setContentTitle("Report Submitted")
+            .setContentText("Incident: $reportTitle has been recorded.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(context)) {
+            // ID 1 is fine for a single notification
+            notify(1, builder.build())
         }
     }
 }

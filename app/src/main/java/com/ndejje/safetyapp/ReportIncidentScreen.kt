@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.filled.AddCircle
 import com.ndejje.safetyapp.R
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.ui.platform.LocalContext
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -27,6 +29,7 @@ fun ReportIncidentScreen(
     onReportSubmitted: () -> Unit,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
     // Existing States
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -167,6 +170,7 @@ fun ReportIncidentScreen(
                         campus = selectedCampus,
                         category = selectedCategory,
                         imageUri = imageUri?.toString(),
+                        context = context,
                         isAnonymous = isAnonymous
                     )
                     onReportSubmitted()
