@@ -23,7 +23,7 @@
 
     <string name="btn_report_incident">Report an Incident</string>
     <string name="btn_view_alerts">View Live Alerts</string>
-    <string name="btn_emergency_call">CALL CAMPUS SECURITY</string>
+
 
         <string name="res_night_title">Night Safety</string>
         <string name="res_night_content">Avoid walking alone in dark areas of the Main Campus. Stick to the paved, lit paths and keep your phone charged.</string>
@@ -36,5 +36,15 @@
         <string name="res_mental_title">Mental Health</string>
         <string name="res_mental_content">If you feel overwhelmed, anxious, or depressed, Ndejje University offers free, confidential counseling sessions.</string>
         <string name="res_mental_contact">Counselor: 0788111222</string>
+
+    <string name="menu_report">Report Incident</string>
+    <string name="menu_alerts">Live Alerts</string>
+    <string name="menu_analytics">Analytics</string>
+    <string name="menu_resources">Safety Info</string>
+
+    <string name="btn_emergency_call">EMERGENCY CALL</string>
+
+    <string name="label_welcome_back">Welcome back,</string>
+    <string name="desc_logout">Logout</string>
 
 </resources>

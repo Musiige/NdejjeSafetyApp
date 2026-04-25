@@ -1,6 +1,5 @@
 package com.ndejje.safetyapp
 
-
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,8 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage // This fixes the red AsyncImage
-@OptIn(ExperimentalMaterial3Api::class)
+import coil.compose.AsyncImage
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ReportIncidentScreen(
     viewModel: SafetyViewModel,
@@ -29,19 +29,29 @@ fun ReportIncidentScreen(
     val context = LocalContext.current
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var isAnonymous by remember { mutableStateOf(false) }
 
     // --- CAMPUS DROPDOWN STATE ---
     val campusOptions = listOf("Main Campus", "Kampala Campus", "Luweero Campus")
     var campusExpanded by remember { mutableStateOf(false) }
     var campus by remember { mutableStateOf(campusOptions[0]) }
 
+    // --- CATEGORY CHIPS STATE ---
+    val categories = listOf(
+        "Physical Assault",
+        "Theft / Robbery",
+        "Sexual Harassment",
+        "Security Guard Issue",
+        "Mental Health Concern",
+        "Other Emergency"
+    )
+    var selectedCategory by remember { mutableStateOf(categories[0]) }
+
     // --- PHOTO PICKER STATE ---
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val photoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? -> imageUri = uri }
-
-    var category by remember { mutableStateOf("General") }
 
     Scaffold(
         topBar = {
@@ -66,7 +76,44 @@ fun ReportIncidentScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            Text("Incident Details", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text("Incident Category", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+
+            // FlowRow wraps chips to next line automatically
+            FlowRow(
+                modifier = Modifier.padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                categories.forEach { cat ->
+                    FilterChip(
+                        selected = (selectedCategory == cat),
+                        onClick = { selectedCategory = cat },
+                        label = { Text(cat) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // ANONYMITY TOGGLE
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Report Anonymously", modifier = Modifier.weight(1f))
+                Switch(
+                    checked = isAnonymous,
+                    onCheckedChange = { isAnonymous = it }
+                )
+            }
+
+            if (isAnonymous) {
+                Text(
+                    "Your name will be hidden from other students.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // TITLE
@@ -120,7 +167,7 @@ fun ReportIncidentScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- PHOTO SECTION ---
+            // PHOTO SECTION
             Text("Attachment", fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -143,18 +190,20 @@ fun ReportIncidentScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // SUBMIT BUTTON (Now passing the imageUri and Campus)
+            // SUBMIT BUTTON
             SafetyButton(
                 text = "SUBMIT INCIDENT",
-                onClick = {val imagePath: String? = imageUri?.toString()
+                onClick = {
+                    val imagePath: String? = imageUri?.toString()
+
                     viewModel.submitReport(
                         context = context,
                         title = title,
                         description = description,
                         campus = campus,
-                        category = category,
-                        imageUri = imagePath, // Fixed: No longer null
-                        isAnonymous = false
+                        category = selectedCategory, // Passing the chip value
+                        imageUri = imagePath,
+                        isAnonymous = isAnonymous // Passing the switch value
                     )
                     onReportSubmitted()
                 }
