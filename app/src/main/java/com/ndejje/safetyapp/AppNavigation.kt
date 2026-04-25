@@ -1,12 +1,9 @@
 package com.ndejje.safetyapp
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 object Routes {
     const val LOGIN = "login"
@@ -14,7 +11,7 @@ object Routes {
     const val REGISTER = "register"
     const val ALERTS = "alerts"
     const val ANALYTICS = "analytics"
-    const val HOME = "home" // Simplified for the route key
+    const val HOME = "home"
     const val RESOURCES = "resources"
 }
 
@@ -25,6 +22,16 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
 
+    // Determine user details once for the navigation session
+    val currentUsername = safetyViewModel.loggedInUser ?: "Student"
+
+    // Logic: If username contains 'admin', treat as Admin, else Student
+    val currentUserRole = if (currentUsername.contains("admin", ignoreCase = true)) {
+        "admin"
+    } else {
+        "student"
+    }
+
     NavHost(navController = navController, startDestination = Routes.LOGIN) {
 
         // LOGIN SCREEN
@@ -32,7 +39,6 @@ fun AppNavigation(
             LoginScreen(
                 viewModel = authViewModel,
                 onLoginSuccess = { username ->
-                    // Set the user in safetyViewModel before navigating
                     safetyViewModel.login(username)
                     navController.navigate(Routes.HOME) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
@@ -62,8 +68,8 @@ fun AppNavigation(
         // HOME SCREEN
         composable(Routes.HOME) {
             HomeScreen(
-                // FIXED: Changed 'viewModel' to 'safetyViewModel'
-                username = safetyViewModel.loggedInUser ?: "Student",
+                username = currentUsername,
+                userRole = currentUserRole, // FIXED: Now passing userRole
                 onLogout = {
                     safetyViewModel.logout()
                     navController.navigate(Routes.LOGIN) {
@@ -74,6 +80,16 @@ fun AppNavigation(
                 onNavigateToAlerts = { navController.navigate(Routes.ALERTS) },
                 onNavigateToAnalytics = { navController.navigate(Routes.ANALYTICS) },
                 onNavigateToResources = { navController.navigate(Routes.RESOURCES) }
+            )
+        }
+
+        // ALERTS SCREEN
+        composable(Routes.ALERTS) {
+            AlertsDashboard(
+                viewModel = safetyViewModel,
+                userRole = currentUserRole,      // FIXED: Now passing userRole
+                currentUsername = currentUsername, // FIXED: Now passing username
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -99,14 +115,6 @@ fun AppNavigation(
         // RESOURCES SCREEN
         composable(Routes.RESOURCES) {
             SafetyResourcesScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        // ALERTS SCREEN
-        composable(Routes.ALERTS) {
-            AlertsDashboard(
-                viewModel = safetyViewModel,
                 onBack = { navController.popBackStack() }
             )
         }

@@ -18,6 +18,9 @@ interface IncidentDao {
     @Query("SELECT COUNT(*) FROM incidents WHERE campus = :campusName")
     fun getCountByCampus(campusName: String): Flow<Int>
 
+    @Query("UPDATE incidents SET status = :status WHERE id = :id")
+    suspend fun updateStatus(id: Int, status: String)
+
     @Query("SELECT * FROM incidents WHERE campus = :campusName")
     fun getIncidentsByCampus(campusName: String): Flow<List<IncidentEntity>>
 }

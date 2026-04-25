@@ -37,6 +37,18 @@
         <string name="res_mental_content">If you feel overwhelmed, anxious, or depressed, Ndejje University offers free, confidential counseling sessions.</string>
         <string name="res_mental_contact">Counselor: 0788111222</string>
 
+    <string name="res_fire_title">Fire Safety</string>
+    <string name="res_fire_content">In case of fire, evacuate the building immediately using the nearest exit. Do not use elevators. Assemble at the designated points at the Main Square or near the Sports Grounds.</string>
+    <string name="res_fire_contact">Fire Dept: 999 / 112</string>
+
+    <string name="res_theft_title">Preventing Theft</string>
+    <string name="res_theft_content">Always lock your hostel room, even if you are just stepping out for a minute. Label your electronics and never leave your laptop unattended in the library or computer labs.</string>
+    <string name="res_theft_contact">Security: 0700123456</string>
+
+    <string name="res_medical_title">Medical Emergencies</string>
+    <string name="res_medical_content">For sudden illness or injuries, visit the University Health Center. If it is after hours, contact the emergency ambulance line for transport to the nearest hospital.</string>
+    <string name="res_medical_contact">Health Center: 0788123456</string>
+
     <string name="menu_report">Report Incident</string>
     <string name="menu_alerts">Live Alerts</string>
     <string name="menu_analytics">Analytics</string>

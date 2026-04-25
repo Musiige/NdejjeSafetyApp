@@ -36,9 +36,18 @@ class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() 
     }
 
     /**
+     * ADMIN LOGIC: Update a report's status to "Approved"
+     * This will make "Pending" reports visible to everyone.
+     */
+    fun approveIncident(incidentId: Int) {
+        viewModelScope.launch {
+            // Note: Arnold needs to ensure 'updateIncidentStatus' exists in the Repository
+            repository.updateIncidentStatus(incidentId, "Approved")
+        }
+    }
+
+    /**
      * Submits a report to the Room Database.
-     * Logic: If the category is "Sexual Harassment", set status to "Pending"
-     * to protect victim privacy until an admin reviews it.
      */
     fun submitReport(
         context: Context,
@@ -52,9 +61,9 @@ class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() 
         viewModelScope.launch {
             // Determine initial visibility/status
             val initialStatus = if (category == "Sexual Harassment") {
-                "Pending" // Sensitive reports require admin approval before showing in Alerts
+                "Pending"
             } else {
-                "Approved" // General alerts show immediately
+                "Approved"
             }
 
             val newIncident = IncidentEntity(
@@ -69,8 +78,6 @@ class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() 
             )
 
             repository.reportIncident(newIncident)
-
-            // Trigger the notification
             showLocalNotification(context, title)
         }
     }
@@ -85,7 +92,6 @@ class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() 
             .setAutoCancel(true)
 
         with(NotificationManagerCompat.from(context)) {
-            // Using a unique ID (timestamp) allows multiple notifications to show up
             notify(System.currentTimeMillis().toInt(), builder.build())
         }
     }

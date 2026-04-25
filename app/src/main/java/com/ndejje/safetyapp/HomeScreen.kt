@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HomeScreen(
     username: String,
+    userRole: String, // "admin" or "student"
     onLogout: () -> Unit,
     onNavigateToReport: () -> Unit,
     onNavigateToAlerts: () -> Unit,
@@ -36,7 +37,7 @@ fun HomeScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.app_name).uppercase(),
+                        text = if (userRole == "admin") "ADMIN DASHBOARD" else stringResource(R.string.app_name).uppercase(),
                         fontWeight = FontWeight.ExtraBold
                     )
                 },
@@ -50,7 +51,7 @@ fun HomeScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = if (userRole == "admin") Color(0xFF263238) else MaterialTheme.colorScheme.primary,
                     titleContentColor = Color.White
                 )
             )
@@ -68,78 +69,93 @@ fun HomeScreen(
                 color = Color.Gray
             )
             Text(
-                text = username,
+                text = "$username ($userRole)",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Main Menu Grid using Externalized Strings and Standard Icons
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.weight(1f)
-            ) {
-                item {
-                    MenuCard(
-                        title = stringResource(R.string.menu_report),
-                        icon = Icons.Default.Notifications,
-                        iconColor = Color(0xFFE53935),
-                        onClick = onNavigateToReport
-                    )
-                }
-                item {
-                    MenuCard(
-                        title = stringResource(R.string.menu_alerts),
-                        icon = Icons.Default.Warning,
-                        iconColor = Color(0xFFFBC02D),
-                        onClick = onNavigateToAlerts
-                    )
-                }
-                item {
-                    MenuCard(
-                        title = stringResource(R.string.menu_analytics),
-                        icon = Icons.Default.List,
-                        iconColor = Color(0xFF1E88E5),
-                        onClick = onNavigateToAnalytics
-                    )
-                }
-                item {
-                    MenuCard(
-                        title = stringResource(R.string.menu_resources),
-                        icon = Icons.Default.Info,
-                        iconColor = Color(0xFF43A047),
-                        onClick = onNavigateToResources
-                    )
-                }
+            // THE ROUTER: Picks which dashboard to show
+            if (userRole == "admin") {
+                AdminGrid(onNavigateToAnalytics, onNavigateToAlerts)
+            } else {
+                UserGrid(onNavigateToReport, onNavigateToAlerts, onNavigateToResources)
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
-            // Emergency Button with Dialer Intent and Externalized String
-            Button(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:0700123456"))
-                    context.startActivity(intent)
-                },
-                modifier = Modifier.fillMaxWidth().height(64.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Icon(Icons.Default.Phone, contentDescription = null)
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = stringResource(R.string.btn_emergency_call),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
+            // Only users see the Emergency Button
+            if (userRole != "admin") {
+                Button(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:0700123456"))
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.fillMaxWidth().height(64.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Icon(Icons.Default.Phone, contentDescription = null)
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = stringResource(R.string.btn_emergency_call),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
             }
         }
     }
 }
 
+// --- USER DASHBOARD SECTION ---
+@Composable
+fun UserGrid(
+    onNavigateToReport: () -> Unit,
+    onNavigateToAlerts: () -> Unit,
+    onNavigateToResources: () -> Unit
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            MenuCard(stringResource(R.string.menu_report), Icons.Default.Notifications, Color(0xFFE53935), onNavigateToReport)
+        }
+        item {
+            MenuCard(stringResource(R.string.menu_alerts), Icons.Default.Warning, Color(0xFFFBC02D), onNavigateToAlerts)
+        }
+        item {
+            MenuCard(stringResource(R.string.menu_resources), Icons.Default.Info, Color(0xFF43A047), onNavigateToResources)
+        }
+    }
+}
+
+// --- ADMIN DASHBOARD SECTION ---
+@Composable
+fun AdminGrid(
+    onNavigateToAnalytics: () -> Unit,
+    onNavigateToAlerts: () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        MenuCard(
+            title = stringResource(R.string.menu_analytics),
+            icon = Icons.Default.List,
+            iconColor = Color(0xFF1E88E5),
+            onClick = onNavigateToAnalytics
+        )
+        MenuCard(
+            title = "Review Reports",
+            icon = Icons.Default.Edit,
+            iconColor = Color(0xFF607D8B),
+            onClick = onNavigateToAlerts
+        )
+    }
+}
+
+// --- COMMON UI COMPONENT ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuCard(title: String, icon: ImageVector, iconColor: Color, onClick: () -> Unit) {
@@ -159,12 +175,7 @@ fun MenuCard(title: String, icon: ImageVector, iconColor: Color, onClick: () -> 
                 modifier = Modifier.size(48.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconColor,
-                        modifier = Modifier.size(28.dp)
-                    )
+                    Icon(icon, contentDescription = null, tint = iconColor, modifier = Modifier.size(28.dp))
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))

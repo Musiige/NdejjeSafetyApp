@@ -12,6 +12,10 @@ class IncidentRepository(private val incidentDao: IncidentDao) {
         incidentDao.insertIncident(incident)
     }
 
+    suspend fun updateIncidentStatus(id: Int, status: String) {
+        incidentDao.updateStatus(id, status)
+    }
+
     // Function to filter by campus (Useful for the Dashboard)
     fun getIncidentsByCampus(campus: String): Flow<List<IncidentEntity>> =
         incidentDao.getIncidentsByCampus(campus)
