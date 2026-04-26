@@ -69,7 +69,7 @@ fun AppNavigation(
         composable(Routes.HOME) {
             HomeScreen(
                 username = currentUsername,
-                userRole = currentUserRole, // FIXED: Now passing userRole
+                userRole = currentUserRole,
                 onLogout = {
                     safetyViewModel.logout()
                     navController.navigate(Routes.LOGIN) {
@@ -87,8 +87,8 @@ fun AppNavigation(
         composable(Routes.ALERTS) {
             AlertsDashboard(
                 viewModel = safetyViewModel,
-                userRole = currentUserRole,      // FIXED: Now passing userRole
-                currentUsername = currentUsername, // FIXED: Now passing username
+                userRole = currentUserRole,
+                currentUsername = currentUsername,
                 onBack = { navController.popBackStack() }
             )
         }

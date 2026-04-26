@@ -2,7 +2,7 @@ package com.ndejje.safetyapp
 
 class UserRepository(private val userDao: UserDao) {
 
-    // Simple hash for demonstration — use BCrypt in production
+    // Simple hash for demonstration
     private fun hashPassword(password: String): String =
         password.hashCode().toString()
 
