@@ -1,6 +1,5 @@
 **🛡️ Ndejje University Safety App:**
 A Real-time Campus Security & Incident Reporting System
-The Ndejje Safety App is a mobile solution designed to enhance campus security.
 It bridges the gap between students and university administration by providing a secure, role-based platform for reporting emergencies 
 and broadcasting verified safety alerts.
 
