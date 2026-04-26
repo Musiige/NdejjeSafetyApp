@@ -24,11 +24,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. CREATE NOTIFICATION CHANNEL (Required for Android 8.0+)
+        // 1. CREATE NOTIFICATION CHANNEL
         createNotificationChannel()
 
-        // 2. REQUEST PERMISSION (Required for Android 13+)
-        // This won't lag your PC; it's a simple OS check
+        // 2. REQUEST PERMISSION
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
                 this,
@@ -77,16 +77,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// ... Keep your Preview code exactly as it was below this ...
-
-// ─────────────────────────────────────────────────────────────
-// PREVIEW
-// @Preview cannot instantiate a real ViewModel — the preview
-// shows the Login screen's visual layout using static values.
-// stringResource() and dimensionResource() resolve correctly
-// inside @Preview — always use them to stay consistent with
-// the coding standards applied throughout the rest of the app.
-// ─────────────────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true, name = "Login Screen Preview")
 @Composable

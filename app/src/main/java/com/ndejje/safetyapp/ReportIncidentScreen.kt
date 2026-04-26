@@ -32,11 +32,11 @@ fun ReportIncidentScreen(
     var isAnonymous by remember { mutableStateOf(false) }
 
     // --- CAMPUS DROPDOWN STATE ---
-    val campusOptions = listOf("Main Campus", "Kampala Campus", "Luweero Campus")
+    val campusOptions = listOf("Main Campus", "Kampala Campus",)
     var campusExpanded by remember { mutableStateOf(false) }
     var campus by remember { mutableStateOf(campusOptions[0]) }
 
-    // --- CATEGORY CHIPS STATE ---
+    // --- CATEGORY  ---
     val categories = listOf(
         "Physical Assault",
         "Theft / Robbery",

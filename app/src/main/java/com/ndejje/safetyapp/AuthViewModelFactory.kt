@@ -2,7 +2,6 @@ package com.ndejje.safetyapp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ndejje.safetyapp.UserRepository
 
 class AuthViewModelFactory(
     private val repository: UserRepository

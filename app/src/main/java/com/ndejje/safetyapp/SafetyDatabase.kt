@@ -22,7 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "momo_login_db"
                 )
-                    .fallbackToDestructiveMigration() // <--- ADD THIS LINE HERE
+                    .fallbackToDestructiveMigration()
                     .build().also { instance = it }
             }
         }

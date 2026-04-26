@@ -28,7 +28,8 @@ fun HomeScreen(
     onNavigateToReport: () -> Unit,
     onNavigateToAlerts: () -> Unit,
     onNavigateToAnalytics: () -> Unit,
-    onNavigateToResources: () -> Unit
+    onNavigateToResources: () -> Unit,
+
 ) {
     val context = LocalContext.current
 
@@ -78,7 +79,7 @@ fun HomeScreen(
 
             // THE ROUTER: Picks which dashboard to show
             if (userRole == "admin") {
-                AdminGrid(onNavigateToAnalytics, onNavigateToAlerts)
+                AdminGrid(onNavigateToAnalytics, onNavigateToAlerts, onNavigateToReport)
             } else {
                 UserGrid(onNavigateToReport, onNavigateToAlerts, onNavigateToResources)
             }
@@ -137,21 +138,39 @@ fun UserGrid(
 @Composable
 fun AdminGrid(
     onNavigateToAnalytics: () -> Unit,
-    onNavigateToAlerts: () -> Unit
+    onNavigateToAlerts: () -> Unit,
+    onNavigateToReport: () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        MenuCard(
-            title = stringResource(R.string.menu_analytics),
-            icon = Icons.Default.List,
-            iconColor = Color(0xFF1E88E5),
-            onClick = onNavigateToAnalytics
-        )
-        MenuCard(
-            title = "Review Reports",
-            icon = Icons.Default.Edit,
-            iconColor = Color(0xFF607D8B),
-            onClick = onNavigateToAlerts
-        )
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.height(300.dp) // Give it a height or use weight(1f)
+    ) {
+        item {
+            MenuCard(
+                title = stringResource(R.string.menu_report),
+                icon = Icons.Default.Notifications,
+                iconColor = Color(0xFFE53935),
+                onClick = onNavigateToReport
+            )
+        }
+        item {
+            MenuCard(
+                title = stringResource(R.string.menu_analytics),
+                icon = Icons.Default.List,
+                iconColor = Color(0xFF1E88E5),
+                onClick = onNavigateToAnalytics
+            )
+        }
+        item {
+            MenuCard(
+                title = "Review Reports",
+                icon = Icons.Default.Edit,
+                iconColor = Color(0xFF607D8B),
+                onClick = onNavigateToAlerts
+            )
+        }
     }
 }
 

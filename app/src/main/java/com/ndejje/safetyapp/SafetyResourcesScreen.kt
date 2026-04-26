@@ -43,7 +43,19 @@ fun SafetyResourcesScreen(onBack: () -> Unit) {
             title = stringResource(R.string.res_fire_title),
             content = stringResource(R.string.res_fire_content),
             contact = stringResource(R.string.res_fire_contact)
-         )
+         ),
+
+                SafetyResource(
+                title = stringResource(R.string.res_theft_title),
+        content = stringResource(R.string.res_theft_content),
+        contact = stringResource(R.string.res_theft_contact)
+    ),
+
+        SafetyResource(
+            title = stringResource(R.string.res_medical_title),
+            content = stringResource(R.string.res_medical_content),
+            contact = stringResource(R.string.res_mental_contact)
+        )
     )
 
     Scaffold(
