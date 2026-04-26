@@ -67,7 +67,6 @@ fun AdminAnalyticsScreen(viewModel: SafetyViewModel, onBack: () -> Unit) {
 
             // Additional Breakdown
             AnalyticsDetailRow("Main Campus", incidentList.count { it.campus == "Main Campus" })
-            AnalyticsDetailRow("Bombo Campus", incidentList.count { it.campus == "Bombo Campus" })
             AnalyticsDetailRow("Kampala Campus", incidentList.count { it.campus == "Kampala Campus" })
         }
     }

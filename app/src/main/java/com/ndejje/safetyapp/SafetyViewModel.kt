@@ -41,7 +41,6 @@ class SafetyViewModel(private val repository: IncidentRepository) : ViewModel() 
      */
     fun approveIncident(incidentId: Int) {
         viewModelScope.launch {
-            // Note: Arnold needs to ensure 'updateIncidentStatus' exists in the Repository
             repository.updateIncidentStatus(incidentId, "Approved")
         }
     }
