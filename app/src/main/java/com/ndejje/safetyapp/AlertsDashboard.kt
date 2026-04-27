@@ -9,8 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Person
-//import androidx.compose.material.icons.filled.Public
-import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,28 +21,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import androidx.compose.ui.draw.clip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertsDashboard(
     viewModel: SafetyViewModel,
-    userRole: String, // Pass from navigation
-    currentUsername: String, // Pass from navigation
+    userRole: String,
+    currentUsername: String,
     onBack: () -> Unit
 ) {
-    val allAlerts by viewModel.incidents.collectAsStateWithLifecycle()
+    // 1. Fixed: Ensure viewModel has a StateFlow named 'incidents'
+    // This is where most "Unresolved reference" errors come from
+    val allAlerts by viewModel.incidents.collectAsStateWithLifecycle(initialValue = emptyList())
+
     var showOnlyMine by remember { mutableStateOf(false) }
 
-    // Logic: Filter which alerts to show based on Role and Toggle
-    val displayList = remember(allAlerts, showOnlyMine, userRole) {
+    // 2. Logic: Filtering the list
+    val displayList = remember(allAlerts, showOnlyMine, userRole, currentUsername) {
         allAlerts.filter { alert ->
             if (showOnlyMine) {
-                // Personal Safety Feature: Only see what YOU reported
                 alert.reporterName == currentUsername
             } else {
-                // General UX Logic:
-                // 1. Admin sees everything
-                // 2. Others see Approved alerts OR their own pending ones
                 userRole == "admin" || alert.status == "Approved" || alert.reporterName == currentUsername
             }
         }
@@ -59,8 +57,6 @@ fun AlertsDashboard(
                         TextButton(onClick = onBack) { Text("Back") }
                     }
                 )
-                // --- General UX: Filter Chips ---
-                // --- General UX: Filter Chips ---
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.Start
@@ -70,11 +66,7 @@ fun AlertsDashboard(
                         onClick = { showOnlyMine = false },
                         label = { Text("Public Alerts") },
                         leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Share, // Use Icons.Default.Share if Public is missing
-                                contentDescription = null,
-                                modifier = Modifier.size(FilterChipDefaults.IconSize)
-                            )
+                            Icon(Icons.Default.Share, null, Modifier.size(FilterChipDefaults.IconSize))
                         }
                     )
                     Spacer(Modifier.width(8.dp))
@@ -83,11 +75,7 @@ fun AlertsDashboard(
                         onClick = { showOnlyMine = true },
                         label = { Text("My Reports") },
                         leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = null,
-                                modifier = Modifier.size(FilterChipDefaults.IconSize)
-                            )
+                            Icon(Icons.Default.Person, null, Modifier.size(FilterChipDefaults.IconSize))
                         }
                     )
                 }
@@ -107,7 +95,8 @@ fun AlertsDashboard(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(displayList) { alert ->
+                // Fixed: Ensure IncidentEntity is recognized
+                items(displayList, key = { it.id }) { alert ->
                     AlertItem(
                         incident = alert,
                         isAdmin = userRole == "admin",
@@ -141,7 +130,6 @@ fun AlertItem(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
-                // --- General UX: Status Badge ---
                 StatusBadge(incident.status)
             }
 
@@ -160,9 +148,10 @@ fun AlertItem(
                         contentScale = ContentScale.Crop
                     )
                 }
+
                 if (incident.status == "Pending" && !isAdmin) {
                     Text(
-                        text = "This report is awaiting admin verification.",
+                        text = "Awaiting admin verification...",
                         style = MaterialTheme.typography.labelSmall,
                         color = Color(0xFFFBC02D),
                         modifier = Modifier.padding(top = 4.dp)
@@ -170,13 +159,11 @@ fun AlertItem(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(8.dp))
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
 
                 Text("Campus: ${incident.campus}", style = MaterialTheme.typography.bodySmall)
                 Text("Reporter: ${if (incident.isAnonymous) "Anonymous" else incident.reporterName}", style = MaterialTheme.typography.bodySmall)
 
-                // --- Admin Management: Approval Button ---
                 if (isAdmin && incident.status == "Pending") {
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
