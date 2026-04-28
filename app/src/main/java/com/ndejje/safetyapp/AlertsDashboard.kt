@@ -10,8 +10,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.foundation.background
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,77 +33,90 @@ fun AlertsDashboard(
     currentUsername: String,
     onBack: () -> Unit
 ) {
-    // 1. Fixed: Ensure viewModel has a StateFlow named 'incidents'
-    // This is where most "Unresolved reference" errors come from
     val allAlerts by viewModel.incidents.collectAsStateWithLifecycle(initialValue = emptyList())
-
     var showOnlyMine by remember { mutableStateOf(false) }
 
-    // 2. Logic: Filtering the list
+    val isAdmin = userRole == "admin"
+    val adminNavy = Color(0xFF263238)
+
     val displayList = remember(allAlerts, showOnlyMine, userRole, currentUsername) {
         allAlerts.filter { alert ->
             if (showOnlyMine) {
                 alert.reporterName == currentUsername
             } else {
-                userRole == "admin" || alert.status == "Approved" || alert.reporterName == currentUsername
+                isAdmin || alert.status == "Approved" || alert.reporterName == currentUsername
             }
         }
     }
 
-    Scaffold(
-        topBar = {
-            Column {
-                TopAppBar(
-                    title = { Text("Safety Dashboard") },
-                    navigationIcon = {
-                        TextButton(onClick = onBack) { Text("Back") }
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = if (isAdmin) adminNavy else MaterialTheme.colorScheme.background
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                Column(modifier = Modifier.background(if (isAdmin) adminNavy else MaterialTheme.colorScheme.surface)) {
+                    TopAppBar(
+                        title = { Text("Safety Dashboard", fontWeight = FontWeight.Bold) },
+                        navigationIcon = {
+                            IconButton(onClick = onBack) {
+                                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                            }
+                        },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = if (isAdmin) adminNavy else MaterialTheme.colorScheme.primary,
+                            titleContentColor = if (isAdmin) Color.White else MaterialTheme.colorScheme.onPrimary,
+                            navigationIconContentColor = if (isAdmin) Color.White else MaterialTheme.colorScheme.onPrimary
+                        )
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        FilterChip(
+                            selected = !showOnlyMine,
+                            onClick = { showOnlyMine = false },
+                            label = { Text("Public Alerts") },
+                            leadingIcon = { Icon(Icons.Default.Share, null, Modifier.size(FilterChipDefaults.IconSize)) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                labelColor = if (isAdmin) Color.LightGray else MaterialTheme.colorScheme.onSurface
+                            )
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        FilterChip(
+                            selected = showOnlyMine,
+                            onClick = { showOnlyMine = true },
+                            label = { Text("My Reports") },
+                            leadingIcon = { Icon(Icons.Default.Person, null, Modifier.size(FilterChipDefaults.IconSize)) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                labelColor = if (isAdmin) Color.LightGray else MaterialTheme.colorScheme.onSurface
+                            )
+                        )
                     }
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    FilterChip(
-                        selected = !showOnlyMine,
-                        onClick = { showOnlyMine = false },
-                        label = { Text("Public Alerts") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Share, null, Modifier.size(FilterChipDefaults.IconSize))
-                        }
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    FilterChip(
-                        selected = showOnlyMine,
-                        onClick = { showOnlyMine = true },
-                        label = { Text("My Reports") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Person, null, Modifier.size(FilterChipDefaults.IconSize))
-                        }
-                    )
                 }
             }
-        }
-    ) { padding ->
-        if (displayList.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text(
-                    text = if (showOnlyMine) "You haven't reported anything yet." else "No active alerts for Ndejje.",
-                    color = Color.Gray
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.padding(padding).fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Fixed: Ensure IncidentEntity is recognized
-                items(displayList, key = { it.id }) { alert ->
-                    AlertItem(
-                        incident = alert,
-                        isAdmin = userRole == "admin",
-                        onApprove = { viewModel.approveIncident(alert.id) }
+        ) { padding ->
+            if (displayList.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = if (showOnlyMine) "You haven't reported anything yet." else "No active alerts for Ndejje.",
+                        color = if (isAdmin) Color.LightGray else Color.Gray
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.padding(padding).fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(displayList, key = { it.id }) { alert ->
+                        AlertItem(
+                            incident = alert,
+                            isAdmin = isAdmin,
+                            onApprove = { viewModel.approveIncident(alert.id) }
+                        )
+                    }
                 }
             }
         }
@@ -121,6 +136,10 @@ fun AlertItem(
             .fillMaxWidth()
             .clickable { isExpanded = !isExpanded },
         elevation = CardDefaults.cardElevation(if (isExpanded) 6.dp else 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isAdmin) Color(0xFF37474F) else MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = if (isAdmin) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+        ),
         border = if (incident.status == "Pending") BorderStroke(1.dp, Color(0xFFFBC02D)) else null
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -128,12 +147,17 @@ fun AlertItem(
                 Text(
                     text = incident.category.uppercase(),
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    color = if (isAdmin) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary
                 )
                 StatusBadge(incident.status)
             }
 
-            Text(text = incident.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(
+                text = incident.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = if (isAdmin) Color.White else MaterialTheme.colorScheme.onSurface
+            )
 
             if (isExpanded) {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -159,7 +183,10 @@ fun AlertItem(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                Divider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = if (isAdmin) Color.White.copy(alpha = 0.2f) else MaterialTheme.colorScheme.outlineVariant
+                )
 
                 Text("Campus: ${incident.campus}", style = MaterialTheme.typography.bodySmall)
                 Text("Reporter: ${if (incident.isAnonymous) "Anonymous" else incident.reporterName}", style = MaterialTheme.typography.bodySmall)
@@ -177,7 +204,12 @@ fun AlertItem(
                     }
                 }
             } else {
-                Text("Tap to view details...", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.padding(top = 4.dp))
+                Text(
+                    text = "Tap to view details...",
+                    fontSize = 12.sp,
+                    color = if (isAdmin) Color.LightGray else Color.Gray,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
         }
     }
