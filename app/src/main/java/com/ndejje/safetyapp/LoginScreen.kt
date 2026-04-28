@@ -123,17 +123,21 @@ fun LoginScreen(
 
                 // Password Field
                 OutlinedTextField(
-                    value = usernameInput,
-                    onValueChange = { usernameInput = it },
-                    label = { Text("Username") },
-                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+                    value = passwordInput,
+                    onValueChange = { passwordInput = it },
+                    label = { Text("Password") }, // Capitalized for better UI
+                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) }, // Changed to Lock
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
-                    // Using only the most basic, universal parameters:
+                    // --- ADD THESE TWO LINES FOR SECURITY ---
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    // -----------------------------------------
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        cursorColor = MaterialTheme.colorScheme.primary
                     )
                 )
 
