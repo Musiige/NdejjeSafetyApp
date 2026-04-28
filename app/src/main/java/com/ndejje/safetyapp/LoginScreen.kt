@@ -12,15 +12,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-// Professional Safety Palette
-val SafetyGreen = Color(0xFF1B5E20) // Deep Forest Green
-val SoftGrey = Color(0xFFF5F5F5)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +40,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SafetyGreen) // Top part remains green
+            .background(MaterialTheme.colorScheme.primary) // Dynamic green from theme
     ) {
         // --- TOP SECTION: Branding ---
         Box(
@@ -56,20 +53,20 @@ fun LoginScreen(
                 Icon(
                     imageVector = Icons.Default.Lock,
                     contentDescription = "App Logo",
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onPrimary, // High contrast icon
                     modifier = Modifier.size(80.dp)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "NDEJJE SAFETY",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 2.sp
                 )
                 Text(
                     text = "Secure Campus Portal",
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
                     fontSize = 14.sp
                 )
             }
@@ -78,7 +75,8 @@ fun LoginScreen(
         // --- BOTTOM SECTION: Login Card ---
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = Color.White,
+            // surface flips between White (Light Mode) and Dark Grey (Dark Mode)
+            color = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
         ) {
             Column(
@@ -91,13 +89,15 @@ fun LoginScreen(
                     text = "Welcome Back",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    // onSurface flips between Black and White
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Please sign in to continue",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
+                    // onSurfaceVariant is the "Smart Gray"
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -110,21 +110,31 @@ fun LoginScreen(
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    singleLine = true
+                    singleLine = true,
+                    // Use TextFieldDefaults instead of OutlinedTextFieldDefaults
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        cursorColor = MaterialTheme.colorScheme.primary
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Password Field
                 OutlinedTextField(
-                    value = passwordInput,
-                    onValueChange = { passwordInput = it },
-                    label = { Text("Password") },
-                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+                    value = usernameInput,
+                    onValueChange = { usernameInput = it },
+                    label = { Text("Username") },
+                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    singleLine = true,
+                    // Using only the most basic, universal parameters:
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    )
                 )
 
                 // Error Message
@@ -146,11 +156,18 @@ fun LoginScreen(
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = SafetyGreen),
+                    // Uses primary from Theme (SafetyGreen)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
                     enabled = authState !is AuthUiState.Loading
                 ) {
                     if (authState is AuthUiState.Loading) {
-                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(24.dp)
+                        )
                     } else {
                         Text("SIGN IN", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
@@ -162,7 +179,7 @@ fun LoginScreen(
                 TextButton(onClick = onNavigateToRegister) {
                     Text(
                         text = "Don't have an account? Register here",
-                        color = SafetyGreen,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
