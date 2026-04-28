@@ -29,88 +29,102 @@ fun HomeScreen(
     onNavigateToAlerts: () -> Unit,
     onNavigateToAnalytics: () -> Unit,
     onNavigateToResources: () -> Unit,
-
 ) {
     val context = LocalContext.current
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = if (userRole == "admin") "ADMIN DASHBOARD" else stringResource(R.string.app_name).uppercase(),
-                        fontWeight = FontWeight.ExtraBold
+    // Admin Color logic for background and top bar
+    val isAdmin = userRole == "admin"
+    val containerColor = if (isAdmin) Color(0xFF263238) else MaterialTheme.colorScheme.background
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = containerColor // Admin gets the Charcoal Navy, User gets standard theme background
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent, // Let Surface handle background
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = if (isAdmin) "ADMIN DASHBOARD" else stringResource(R.string.app_name).uppercase(),
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    },
+                    actions = {
+                        IconButton(onClick = onLogout) {
+                            Icon(
+                                imageVector = Icons.Default.ExitToApp,
+                                contentDescription = stringResource(R.string.desc_logout),
+                                tint = MaterialTheme.colorScheme.onPrimary // Theme-aware tint
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = if (isAdmin) Color(0xFF263238) else MaterialTheme.colorScheme.primary,
+                        titleContentColor = if (isAdmin) Color.White else MaterialTheme.colorScheme.onPrimary
                     )
-                },
-                actions = {
-                    IconButton(onClick = onLogout) {
-                        Icon(
-                            imageVector = Icons.Default.ExitToApp,
-                            contentDescription = stringResource(R.string.desc_logout),
-                            tint = Color.White
+                )
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .padding(20.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.label_welcome_back),
+                    style = MaterialTheme.typography.bodyLarge,
+                    // Use onSurfaceVariant instead of hardcoded Color.Gray for Dark Mode visibility
+                    color = if (isAdmin) Color.LightGray else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "$username ($userRole)",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isAdmin) Color.White else MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                if (isAdmin) {
+                    AdminGrid(onNavigateToAnalytics, onNavigateToAlerts, onNavigateToReport)
+                } else {
+                    UserGrid(onNavigateToReport, onNavigateToAlerts, onNavigateToResources)
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                if (!isAdmin) {
+                    Button(
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:0700123456"))
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(64.dp),
+                        // MaterialTheme.colorScheme.error is the standard way to show "Emergency/Danger"
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
+                        ),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        Icon(Icons.Default.Phone, contentDescription = null)
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = stringResource(R.string.btn_emergency_call),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
                     }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = if (userRole == "admin") Color(0xFF263238) else MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
-                )
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .padding(20.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.label_welcome_back),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Gray
-            )
-            Text(
-                text = "$username ($userRole)",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // THE ROUTER: Picks which dashboard to show
-            if (userRole == "admin") {
-                AdminGrid(onNavigateToAnalytics, onNavigateToAlerts, onNavigateToReport)
-            } else {
-                UserGrid(onNavigateToReport, onNavigateToAlerts, onNavigateToResources)
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Only users see the Emergency Button
-            if (userRole != "admin") {
-                Button(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:0700123456"))
-                        context.startActivity(intent)
-                    },
-                    modifier = Modifier.fillMaxWidth().height(64.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Icon(Icons.Default.Phone, contentDescription = null)
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(R.string.btn_emergency_call),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
                 }
             }
         }
     }
 }
 
-// --- USER DASHBOARD SECTION ---
 @Composable
 fun UserGrid(
     onNavigateToReport: () -> Unit,
@@ -122,19 +136,12 @@ fun UserGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        item {
-            MenuCard(stringResource(R.string.menu_report), Icons.Default.Notifications, Color(0xFFE53935), onNavigateToReport)
-        }
-        item {
-            MenuCard(stringResource(R.string.menu_alerts), Icons.Default.Warning, Color(0xFFFBC02D), onNavigateToAlerts)
-        }
-        item {
-            MenuCard(stringResource(R.string.menu_resources), Icons.Default.Info, Color(0xFF43A047), onNavigateToResources)
-        }
+        item { MenuCard(stringResource(R.string.menu_report), Icons.Default.Notifications, Color(0xFFE53935), onNavigateToReport) }
+        item { MenuCard(stringResource(R.string.menu_alerts), Icons.Default.Warning, Color(0xFFFBC02D), onNavigateToAlerts) }
+        item { MenuCard(stringResource(R.string.menu_resources), Icons.Default.Info, Color(0xFF43A047), onNavigateToResources) }
     }
 }
 
-// --- ADMIN DASHBOARD SECTION ---
 @Composable
 fun AdminGrid(
     onNavigateToAnalytics: () -> Unit,
@@ -145,52 +152,39 @@ fun AdminGrid(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.height(300.dp) // Give it a height or use weight(1f)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        item {
-            MenuCard(
-                title = stringResource(R.string.menu_report),
-                icon = Icons.Default.Notifications,
-                iconColor = Color(0xFFE53935),
-                onClick = onNavigateToReport
-            )
-        }
-        item {
-            MenuCard(
-                title = stringResource(R.string.menu_analytics),
-                icon = Icons.Default.List,
-                iconColor = Color(0xFF1E88E5),
-                onClick = onNavigateToAnalytics
-            )
-        }
-        item {
-            MenuCard(
-                title = "Review Reports",
-                icon = Icons.Default.Edit,
-                iconColor = Color(0xFF607D8B),
-                onClick = onNavigateToAlerts
-            )
-        }
+        item { MenuCard(stringResource(R.string.menu_report), Icons.Default.Notifications, Color(0xFFE53935), onNavigateToReport) }
+        item { MenuCard(stringResource(R.string.menu_analytics), Icons.Default.List, Color(0xFF1E88E5), onNavigateToAnalytics) }
+        item { MenuCard("Review Reports", Icons.Default.Edit, Color(0xFF607D8B), onNavigateToAlerts) }
     }
 }
 
-// --- COMMON UI COMPONENT ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuCard(title: String, icon: ImageVector, iconColor: Color, onClick: () -> Unit) {
     ElevatedCard(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(140.dp),
-        shape = MaterialTheme.shapes.large
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(140.dp),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.elevatedCardColors(
+            // surfaceVariant provides a nice slight contrast against the background
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Surface(
                 shape = MaterialTheme.shapes.small,
-                color = iconColor.copy(alpha = 0.1f),
+                color = iconColor.copy(alpha = 0.2f),
                 modifier = Modifier.size(48.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
