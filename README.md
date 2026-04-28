@@ -1,40 +1,65 @@
-**🛡️ Ndejje University Safety App:**
-A Real-time Campus Security & Incident Reporting System
-It bridges the gap between students and university administration by providing a secure, role-based platform for reporting emergencies 
-and broadcasting verified safety alerts.
+# **Ndejje Safety App** 🛡️
+### [**📺 Watch the App Demo on YouTube**](https://your-youtube-link-here.com)
 
-🚀 **Key Features**
-1. **Smart Incident Reporting**
-     Categorized Reports:
-     Supports various categories (Theft, Medical, Fire, Harassment).
-     Anonymous Mode: Students can report incidents without revealing their identity to protect their privacy.
-     Evidence Attachment: Support for image uploads to provide visual context to security teams.
-2.**Advanced Moderation PipelineSensitive Data Protection:**
-    Reports marked as "Sexual Harassment" are automatically flagged as Pending.Admin Review:
-    Sensitive reports remain hidden from the public feed until a verified Administrator reviews and approves them.
-    Real-time Alerts: Once approved, alerts are instantly pushed to all campus users.
-3. **Role-Based DashboardsStudent View:**
-     Access to a public alert feed and a personal "My Reports" history.Admin View:
-     Access to high-level analytics, incident management, and a verification queue.
-   
- 🏗️ **Architecture & Tools**
-   The app is built using modern Android development standards to ensure scalability and performance:
-   Jetpack Compose: For a modern, reactive user interface.
-   MVVM Architecture: Ensures a clean separation between UI logic and data.
-   Room Database: Local SQLite persistence for offline access to safety resources.
-   Kotlin Coroutines/Flow: For smooth, asynchronous database operations and real-time UI updates.
+The **Ndejje Safety App** is a specialized mobile emergency response system developed for Ndejje 
+University. It bridges the gap between students and campus security by providing a real-time, role-
+based platform for incident reporting, alert verification, and safety analytics.
 
- 🧪 **Testing & Validation**
- The system has been rigorously tested across the following scenarios:
-**Scenario**	         **Objective**	                                                               **Outcome**
-Authentication	   Ensure secure login and session persistence.                                      Passed
-Privacy Filter	   Verify that "Pending" reports are invisible to other students.	                   Passed
-Admin Approval	   Confirm database updates trigger immediate UI refreshes for all users.            Passed
-My Reports	       Ensure users can track the status of their own pending reports.	                 Passed
-RBAC	             Validate that Admin tools are inaccessible to regular student accounts.	         Passed
+---
 
-🛠️ **Installation & SetupClone the Repository:** 
-git clone https://github.com/your-username/NdejjeSafetyApp.gitOpen
-in Android Studio:Ensure you are using version Ladybug (2024.2.1) or newer.
-Gradle Sync: Allow the IDE to download dependencies (Room, Compose, Navigation).
-Run: Deploy to an emulator or device (API 24+).
+## **👥 Team Roster**
+| Name                    | Student ID        | Defined Role                           |
+|:------------------------|:------------------|:---------------------------------------|
+| **AIJUKA ARNOLD**       | *25/2/306/WJ/149* | **Lead Developer**                     |
+| *MUSIIGE ALFRED JUNIOR* | *24/2/306/WJ/149* | **UI/UX Designer/DOC & RESEARCH LEAD** |
+| *KIZITO KEZEKIAH*       | *25/2/306/W/3273* | **Testing & QA Engineer**              |
+| *MUTUMBA MORRIS*        | *24/2/306/W/059*  | *Git & Quality Manager*                |
+
+
+---
+
+## **🚀 Feature Set**
+* **Theme-Aware Interface:** Fully optimized for **Dark Mode** and **Light Mode** using Material 3 
+    dynamic color mapping.
+* **Role-Based Access Control (RBAC):** * **Students:** Report incidents (Anonymous toggle), view 
+    public alerts, and track personal report status.
+* **Admins:** Command Center view , incident verification logic, and system analytics.
+* **Incident Management:** Categorized reporting (Physical Assault, Theft, Medical, etc.) with 
+    campus-specific selection.
+* **Multimedia Integration:** Support for image attachments using the Coil library for visual evidence.
+* **Emergency Quick-Dial:** campus security hotline integration for instant SOS calls.
+
+---
+
+## **🛠️ Technical Stack**
+* **UI:** Jetpack Compose (Material 3)
+* **Local DB:** Room Persistence Library (SQLite)
+* **Architecture:** MVVM (Model-View-ViewModel)
+* **Concurrency:** Kotlin Coroutines & StateFlow
+* **Image Handling:** Coil Image Loader
+* **Navigation:** Compose Navigation Component
+
+---
+
+## **✅ QA Summary**
+The following test cases were conducted by the QA Engineer to ensure production readiness.
+
+| Test Case ID | Feature Tested       | Expected Result                                                  | Status   |
+|:-------------|:---------------------|:-----------------------------------------------------------------|:---------|
+| **TC-01**    | **Theme Contrast**   | All text/inputs remain visible when switching to Dark Mode.      | **PASS** |
+| **TC-02**    | **Admin Dashboard**  | Branding flips to Navy/Charcoal for Admins to signify authority. | **PASS** |
+| **TC-03**    | **Anonymity Logic**  | Reporter ID is hidden from the public feed when toggled.         | **PASS** |
+| **TC-04**    | **Input Integrity**  | Prevents empty "Title" submissions via ViewModel validation.     | **PASS** |
+| **TC-05**    | **Responsive Flow**  | Horizontal scrolling enabled in Landscape via `verticalScroll`.  | **PASS** |
+| **TC-06**    | **Auth Persistence** | User session remains active during orientation changes.          | **PASS** |
+
+---
+
+## **📂 Installation & Setup**
+1. Clone the repository: `git clone https://github.com/YourUsername/NdejjeSafetyApp.git`
+2. Open in **Android Studio (Ladybug 2024.2.1 or higher)**.
+3. Sync Gradle and ensure SDK 34 is installed.
+4. Run on a physical device for full hardware support (Camera/Dialer).
+
+---
+
