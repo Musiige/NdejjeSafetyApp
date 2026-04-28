@@ -24,7 +24,6 @@ fun RegisterScreen(
     onRegisterSuccess: (String) -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
-    // 1. All required states including fullName
     var fullName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -55,7 +54,8 @@ fun RegisterScreen(
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = null,
-                tint = Color.White,
+                // Using onPrimary so it's always white/visible on the green top
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(60.dp)
             )
         }
@@ -63,7 +63,8 @@ fun RegisterScreen(
         // FORM SECTION
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = Color.White,
+            // 'surface' handles the flip between white and dark grey automatically
+            color = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
         ) {
             Column(
@@ -74,18 +75,26 @@ fun RegisterScreen(
                 Text(
                     "Create Account",
                     style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Full Name Field (FIX: Added this to resolve 'fullName' reference error)
+                // --- Helper function to avoid repeating the colors block ---
+                val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                )
+
+                // Full Name Field
                 OutlinedTextField(
                     value = fullName,
                     onValueChange = { fullName = it },
                     label = { Text("Full Name") },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = textFieldColors
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -96,7 +105,8 @@ fun RegisterScreen(
                     onValueChange = { username = it },
                     label = { Text("Username") },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = textFieldColors
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -107,7 +117,8 @@ fun RegisterScreen(
                     onValueChange = { email = it },
                     label = { Text("Email Address") },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = textFieldColors
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -119,7 +130,8 @@ fun RegisterScreen(
                     label = { Text("Password") },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = textFieldColors
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -131,7 +143,8 @@ fun RegisterScreen(
                     label = { Text("Confirm Password") },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = textFieldColors
                 )
 
                 // Error Message
@@ -146,7 +159,6 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // 2. Passing all 5 parameters to your ViewModel
                 SafetyButton(
                     text = "REGISTER",
                     isLoading = authState is AuthUiState.Loading,
@@ -174,7 +186,6 @@ fun RegisterScreen(
                     )
                 }
 
-                // Extra padding at bottom for better scrolling
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
