@@ -9,65 +9,99 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminAnalyticsScreen(viewModel: SafetyViewModel, onBack: () -> Unit) {
-    // 1. Observe the list from the ViewModel
     val incidentList by viewModel.incidents.collectAsState()
-
-    // 2. Get the size
     val totalIncidents = incidentList.size
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("System Analytics") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+    // Consistent Admin Theme Color
+    val adminNavy = Color(0xFF263238)
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = adminNavy // Background for the entire screen
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent, // Let Surface handle background
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            "SYSTEM ANALYTICS",
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.White
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = adminNavy
+                    )
+                )
+            }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Big Stat Card for Total Reports
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    colors = CardDefaults.cardColors(
+                        // primaryContainer provides a nice contrast against the deep Navy
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Total Reports Received",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "$totalIncidents",
+                            style = MaterialTheme.typography.displayLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Big Stat Card for Total Reports
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Total Reports Received",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "$totalIncidents", // This is your incidents.size
-                        style = MaterialTheme.typography.displayLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
 
-            // Additional Breakdown
-            AnalyticsDetailRow("Main Campus", incidentList.count { it.campus == "Main Campus" })
-            AnalyticsDetailRow("Kampala Campus", incidentList.count { it.campus == "Kampala Campus" })
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Additional Breakdown Section
+                Text(
+                    text = "Campus Breakdown",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.LightGray,
+                    modifier = Modifier.align(Alignment.Start).padding(start = 8.dp, bottom = 8.dp)
+                )
+
+                AnalyticsDetailRow("Main Campus", incidentList.count { it.campus == "Main Campus" })
+                Divider(color = Color.White.copy(alpha = 0.1f), modifier = Modifier.padding(horizontal = 8.dp))
+                AnalyticsDetailRow("Kampala Campus", incidentList.count { it.campus == "Kampala Campus" })
+            }
         }
     }
 }
@@ -75,10 +109,21 @@ fun AdminAnalyticsScreen(viewModel: SafetyViewModel, onBack: () -> Unit) {
 @Composable
 fun AnalyticsDetailRow(label: String, count: Int) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, style = MaterialTheme.typography.bodyLarge)
-        Text("$count", fontWeight = FontWeight.Bold)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White
+        )
+        Text(
+            text = "$count",
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primary // Use green for the numbers
+        )
     }
 }
