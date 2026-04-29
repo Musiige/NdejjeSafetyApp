@@ -12,8 +12,8 @@ based platform for incident reporting, alert verification, and safety analytics.
 |:------------------------|:------------------|:---------------------------------------|
 | **AIJUKA ARNOLD**       | *25/2/306/WJ/149* | **Lead Developer**                     |
 | *MUSIIGE ALFRED JUNIOR* | *24/2/306/WJ/149* | **UI/UX Designer/DOC & RESEARCH LEAD** |
-| *KIZITO KEZEKIAH*       | *25/2/306/W/3273* | **Testing & QA Engineer**              |
-| *MUTUMBA MORRIS*        | *24/2/306/W/059*  | *Git & Quality Manager*                |
+| *MUTUMBA MORRIS*       | *25/2/306/W/3273* | **Testing & QA Engineer**              |
+| *KIZITO KEZEKIAH*        | *24/2/306/W/059*  | *Git & Quality Manager*                |
 
 
 ---
