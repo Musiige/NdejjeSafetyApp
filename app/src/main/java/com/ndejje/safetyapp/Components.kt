@@ -30,8 +30,8 @@ fun SafetyButton(
             .height(56.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary, // Reference to your Theme
-            contentColor = MaterialTheme.colorScheme.onPrimary  // Reference to your Theme
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
         ),
         enabled = !isLoading
     ) {

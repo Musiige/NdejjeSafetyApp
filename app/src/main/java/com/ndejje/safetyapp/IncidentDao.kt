@@ -10,7 +10,7 @@ interface IncidentDao {
     @Insert
     suspend fun insertIncident(incident: IncidentEntity)
 
-    // This Flow will automatically update the UI whenever a new incident is added
+
     @Query("SELECT * FROM incidents ORDER BY timestamp DESC")
     fun getAllIncidents(): Flow<List<IncidentEntity>>
 

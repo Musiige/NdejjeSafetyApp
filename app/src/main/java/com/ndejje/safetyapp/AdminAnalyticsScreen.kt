@@ -27,7 +27,7 @@ fun AdminAnalyticsScreen(viewModel: SafetyViewModel, onBack: () -> Unit) {
         color = adminNavy // Background for the entire screen
     ) {
         Scaffold(
-            containerColor = Color.Transparent, // Let Surface handle background
+            containerColor = Color.Transparent,
             topBar = {
                 CenterAlignedTopAppBar(
                     title = {
@@ -90,7 +90,6 @@ fun AdminAnalyticsScreen(viewModel: SafetyViewModel, onBack: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Additional Breakdown Section
                 Text(
                     text = "Campus Breakdown",
                     style = MaterialTheme.typography.titleSmall,
@@ -123,7 +122,7 @@ fun AnalyticsDetailRow(label: String, count: Int) {
             text = "$count",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.primary // Use green for the numbers
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }

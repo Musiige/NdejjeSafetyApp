@@ -22,7 +22,7 @@ fun AppNavigation(
 ) {
     val navController = rememberNavController()
 
-    // Determine user details once for the navigation session
+    // Determine user details
     val currentUsername = safetyViewModel.loggedInUser ?: "Student"
 
     // Logic: If username contains 'admin', treat as Admin, else Student

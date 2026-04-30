@@ -75,7 +75,6 @@ fun HomeScreen(
                 Text(
                     text = stringResource(R.string.label_welcome_back),
                     style = MaterialTheme.typography.bodyLarge,
-                    // Use onSurfaceVariant instead of hardcoded Color.Gray for Dark Mode visibility
                     color = if (isAdmin) Color.LightGray else MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
@@ -104,7 +103,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(64.dp),
-                        // MaterialTheme.colorScheme.error is the standard way to show "Emergency/Danger"
+
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error,
                             contentColor = MaterialTheme.colorScheme.onError

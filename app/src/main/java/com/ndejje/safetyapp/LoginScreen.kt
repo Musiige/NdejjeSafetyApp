@@ -130,7 +130,7 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
-                    // --- ADD THESE TWO LINES FOR SECURITY ---
+                    // SECURITY ---
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     // -----------------------------------------
