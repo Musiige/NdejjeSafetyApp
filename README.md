@@ -8,11 +8,11 @@ based platform for incident reporting, alert verification, and safety analytics.
 ---
 
 ## **👥 Team Roster**
-| Name                   | Student ID        | Defined Role                                    |
-|:-----------------------|:------------------|:------------------------------------------------|
-| **AIJUKA ARNOLD**      | *25/2/306/W/2040* | **Lead Developer**                              |
-| *MUSIIGE ALFRED JUNIOR* | *24/2/306/WJ/149* | **UI/UX Designer/DOC & RESEARCH LEAD**          |
-| *KIZITO KEZEKIAH*      | *24/2/306/W/059*  | *Git & Quality Manager & Testing & QA Engineer* |
+| Name                     | Student ID           | Defined Role                                    |
+|:-----------------------  |:------------------  |:------------------------------------------------ |
+| **AIJUKA ARNOLD**        | **25/2/306/W/2040** | **Lead Developer**                               |
+| **MUSIIGE ALFRED JUNIOR**| **24/2/306/WJ/149** | **UI/UX Designer/DOC & RESEARCH LEAD**           |
+| **KIZITO KEZEKIAH**      | **25/2/306/W/3273** | **Git & Quality Manager / Testing & QA Engineer**|
 
 
 ---
