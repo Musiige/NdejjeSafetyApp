@@ -1,5 +1,5 @@
 # **Ndejje Safety App** 🛡️
-### [**📺 Watch the App Demo on YouTube**](https://your-youtube-link-here.com)
+### [**📺 Watch the App Demo on YouTube**](https://youtu.be/OyAWMCHF88Q)
 
 The **Ndejje Safety App** is a specialized mobile emergency response system developed for Ndejje 
 University. It bridges the gap between students and campus security by providing a real-time, role-
